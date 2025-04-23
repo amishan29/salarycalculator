@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f3f3f3;
+        }
+        input, button {
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+            max-width: 300px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e0ffe0;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1>Salary Calculator</h1>
+    <label for="ctc">Enter CTC (₹):</label>
+    <input type="number" id="ctc" placeholder="Enter CTC">
+    <button onclick="calculateSalary()">Calculate</button>
+
+    <div id="result" class="result" style="display: none;">
+        <h3>Calculated Salary Details:</h3>
+        <p id="output"></p>
+    </div>
+
+    <script>
+        async function calculateSalary() {
+            const ctc = document.getElementById('ctc').value;
+
+            if (!ctc || ctc <= 0) {
+                alert('Please enter a valid CTC.');
+                return;
+            }
+
+            const response = await fetch('http://localhost:8086/api/salary/calculate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ctc: parseFloat(ctc) })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('output').innerHTML = `
+                    <strong>Basic Pay:</strong> ₹${data.basicPay.toFixed(2)}<br>
+                    <strong>HRA:</strong> ₹${data.hra.toFixed(2)}<br>
+                    <strong>LTA:</strong> ₹${data.lta.toFixed(2)}<br>
+                    <strong>Special Allowance:</strong> ₹${data.specialAllowance.toFixed(2)}<br>
+                    <strong>ST Bonus:</strong> ₹${data.stBonus.toFixed(2)}<br>
+                    <strong>DearnessAllowance :</strong> ₹${data.dearnessAllowance.toFixed(2)}<br>
+                    <strong>PF:</strong> ₹${data.pf.toFixed(2)}<br>
+                    <strong>ESIC:</strong> ₹${data.esic.toFixed(2)}<br>
+                    <strong>Income Tax:</strong> ₹${data.incomeTax.toFixed(2)}
+                `;
+                document.getElementById('result').style.display = 'block';
+            } else {
+                alert('Error calculating salary. Please check the backend service.');
+            }
+        }
+    </script>
+</body>
+</html>
