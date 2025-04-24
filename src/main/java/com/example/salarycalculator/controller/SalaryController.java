@@ -21,15 +21,17 @@ public class SalaryController {
   
 
 
-@PostMapping("/calculate")
-@CrossOrigin(origins = "http://127.0.0.1:5500/")
-public SalaryDetails calculateAndSaveSalary(@RequestBody SalaryDetails salaryDetails) {
-    // Using the existing service package's calculateSalary method
-    SalaryDetails calculatedDetails = salaryService.calculateSalary(salaryDetails.getCtc());
-    
-    return salaryService.saveSalaryDetails(calculatedDetails);
-}
-
+    @PostMapping("/calculate")
+    @CrossOrigin(origins = "http://127.0.0.1:5500/")
+    public SalaryDetails calculateSalary(@RequestBody SalaryDetails salaryDetails) {
+        // Calculate salary components based on the provided CTC
+        return salaryService.calculateSalary(salaryDetails.getCtc());
+    }
+    @PostMapping("/save")
+    public SalaryDetails saveSalary(@RequestBody SalaryDetails salaryDetails) {
+        // Save the provided salary details to the database
+        return salaryService.saveSalaryDetails(salaryDetails);
+    }
 
 
     @GetMapping("/{id}")
